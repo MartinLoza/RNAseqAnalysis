@@ -2,4 +2,5 @@
 
 export(GetUMAP)
 export(RunComBatseq)
+export(RunScMerge)
 export(SeuratPreprocessing)
