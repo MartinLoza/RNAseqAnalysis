@@ -1,5 +1,3 @@
-
-
 #' GetUMAP
 #'
 #' @param object Seurat object.

@@ -1,9 +1,9 @@
 #' RunComBatseq
 #'
 #' @param object A seurat object to correct batch effects.
-#' @param batch Batch labels
-#' @param runningTime Return the running time
-#' @param verbose Print verbose
+#' @param batch Batch labels.
+#' @param runningTime Return the running time.
+#' @param verbose Print verbose.
 #' @param ... Arguments passed to other methods.
 #'
 #' @return
