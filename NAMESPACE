@@ -2,3 +2,4 @@
 
 export(GetUMAP)
 export(RunComBatseq)
+export(SeuratPreprocessing)
