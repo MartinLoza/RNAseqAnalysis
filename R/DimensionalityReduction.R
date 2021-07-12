@@ -1,3 +1,20 @@
+
+#' GetPCA
+#'
+#' @param object Seurat object.
+#' @param dims Dimensions to obtain.
+#' @param verbose Print verbose.
+#' @param ... Arguments passed to other methods.
+#'
+#' @return PCA representation.
+#' @export
+GetPCA <- function(object = NULL, dims = 10, verbose = FALSE, ...){
+  object <- Seurat::ScaleData(object, ...)
+  object <- Seurat::RunPCA(object, npcs = dims, ...)
+
+  return(object)
+}
+
 #' GetUMAP
 #'
 #' @param object Seurat object.
