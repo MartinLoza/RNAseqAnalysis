@@ -6,19 +6,17 @@
 #' @param verbose Print verbose.
 #' @param ... Arguments passed to other methods.
 #'
-#' @return
+#' @return Corrected and normalized Seurat object.
 #' @export
-#'
-#' @examples
 RunComBatseq <- function(object = NULL, batch = "batch", runningTime = FALSE, verbose = FALSE, ...){
 
-  features <- VariableFeatures(object)
+  features <- Seurat::VariableFeatures(object)
   if(length(features) == 0){
     warning("Variable features not defined. Running 'FindVariableFeatures' function.", call. = TRUE)
-    features <- VariableFeatures(FindVariableFeatures(object, verbose = verbose))
+    features <- Seurat::VariableFeatures(Seurat::FindVariableFeatures(object, verbose = verbose))
   }
 
-  counts <- as.matrix(GetAssayData(object, assay = "RNA", slot = "counts")[features,])
+  counts <- as.matrix(Seurat::GetAssayData(object, assay = "RNA", slot = "counts")[features,])
   md <- object[[]]
 
   if(!(batch %in% colnames(md)))
@@ -29,14 +27,13 @@ RunComBatseq <- function(object = NULL, batch = "batch", runningTime = FALSE, ve
   })
 
   object[["integrated"]] <- Seurat::CreateAssayObject(counts = corrCounts)
-  DefaultAssay(object) <- "integrated"
+  Seurat::DefaultAssay(object) <- "integrated"
 
-  object <- NormalizeData(object = object, assay = "integrated", verbose = verbose, ...)
-  VariableFeatures(object) <- features
+  object <- Seurat::NormalizeData(object = object, assay = "integrated", verbose = verbose, ...)
+  Seurat::VariableFeatures(object) <- features
 
   if(runningTime == FALSE)
     return(object)
   else
     return(list(object = object, time = time))
 }
-

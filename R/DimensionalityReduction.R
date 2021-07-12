@@ -8,17 +8,15 @@
 #' @param verbose Print verbose.
 #' @param ... Arguments passed to other methods.
 #'
-#' @return
+#' @return UMAP representation.
 #' @export
-#'
-#' @examples
 GetUMAP <- function(object = NULL, dims = 10, reduction = "pca", PCA = TRUE, scale = TRUE, verbose = FALSE, ...){
   if(scale)
-    object <- ScaleData(object, verbose = verbose, ...)
+    object <- Seurat::ScaleData(object, verbose = verbose, ...)
   if(PCA)
-    object <- RunPCA(object, npcs = dims, verbose = verbose, ...)
+    object <- Seurat::RunPCA(object, npcs = dims, verbose = verbose, ...)
 
-  object <- RunUMAP(object, reduction = reduction, dims = 1:dims, verbose = verbose, ...)
+  object <- Seurat::RunUMAP(object, reduction = reduction, dims = 1:dims, verbose = verbose, ...)
 
   return(object)
 }
