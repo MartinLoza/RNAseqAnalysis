@@ -183,3 +183,42 @@ RunScanorama <- function(object = NULL, batch = "batch", runningTime = FALSE, ve
   else
     return(list(object = object, time = time))
 }
+
+#' RunLiger
+#'
+#' @param object A seurat object to correct batch effects.
+#' @param batch Batch labels.
+#' @param k Inner dimension of factorization (number of factors)
+#' @param runningTime Return the running time.
+#' @param verbose Print verbose.
+#' @param ... Arguments passed to other methods.
+#'
+#' @return Seurat object with the corrected data in the 'Liger' reduction.
+#' @export
+RunLiger <- function(object = NULL, batch = "batch", k = 30, runningTime = FALSE, verbose = FALSE, ...){
+
+  features <- Seurat::VariableFeatures(object)
+
+  if(length(features) == 0){
+    warning("Variable features not defined. Running 'FindVariableFeatures' function.", call. = TRUE)
+    features <- Seurat::VariableFeatures(Seurat::FindVariableFeatures(object, verbose = verbose))
+  }
+
+  if(!(batch %in% colnames(object[[]])))
+    stop(paste0(batch, "not found in object's metadata. Check the batch labels."))
+
+  tmp <- object[features,]
+
+  time <- system.time({
+    tmp <- Seurat::ScaleData(tmp, split.by = "batch", do.center = FALSE, verbose = verbose, ...)
+    tmp <- SeuratWrappers::RunOptimizeALS(tmp, k = k, split.by = "batch", ...)
+    tmp <- SeuratWrappers::RunQuantileNorm(tmp, split.by = "batch", ...)
+  })
+
+  object[["Liger"]] <- tmp[["iNMF"]]
+
+  if(runningTime == FALSE)
+    return(object)
+  else
+    return(list(object = object, time = time))
+}

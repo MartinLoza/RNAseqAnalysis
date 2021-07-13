@@ -15,7 +15,9 @@ Imports:
     SummarizedExperiment,
     scMerge,
     batchelor,
-    reticulate
+    reticulate,
+    rliger,
+    SeuratWrappers
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
