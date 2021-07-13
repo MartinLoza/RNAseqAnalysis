@@ -125,3 +125,61 @@ RunMNN <- function(object = NULL, batch = "batch", runningTime = FALSE, verbose 
   else
     return(list(object = object, time = time))
 }
+
+#' RunScanorama
+#'
+#' @param object A seurat object to correct batch effects.
+#' @param batch Batch labels.
+#' @param runningTime Return the running time.
+#' @param verbose Print verbose.
+#' @param ... Arguments passed to other methods.
+#'
+#' @return Seurat object with the corrected data in the 'integrated' assay.
+#' @export
+RunScanorama <- function(object = NULL, batch = "batch", runningTime = FALSE, verbose = FALSE, ...){
+
+  Scanorama <- reticulate::import("scanorama")
+  datal <- list()
+  genel <- list()
+  features <- Seurat::VariableFeatures(object)
+
+  if(length(features) == 0){
+    warning("Variable features not defined. Running 'FindVariableFeatures' function.", call. = TRUE)
+    features <- Seurat::VariableFeatures(Seurat::FindVariableFeatures(object, verbose = verbose))
+  }
+
+  if(!(batch %in% colnames(object[[]])))
+    stop(paste0(batch, "not found in object's metadata. Check the batch labels."))
+
+  objectl <- Seurat::SplitObject(object, split.by = batch)
+
+  for(i in seq_len(length(objectl))){
+    datal[[i]] <- Seurat::GetAssayData(objectl[[i]], assay = "RNA", slot = "data")[features,] # Normalized counts
+    datal[[i]] <- as.matrix(datal[[i]])
+    datal[[i]] <- t(datal[[i]]) # Cell x genes
+
+    genel[[i]] <- features
+  }
+
+  time <- system.time({
+    corrDatal <- Scanorama$correct(datasets_full = datal, genes_list = genel, return_dense = TRUE)
+  })
+
+  corrData <- Reduce(rbind, corrDatal[[1]])
+  corrData <- t(corrData)
+  rownames(corrData) <- corrDatal[[2]]
+  colnames(corrData) <- unlist(sapply(objectl,colnames))
+
+  # Same cell names as the original object
+  corrData <- corrData[,colnames(object)]
+
+  ## Create Seurat assay
+  object[["integrated"]] <- Seurat::CreateAssayObject(counts = corrData)
+  Seurat::DefaultAssay(object) <- "integrated"
+  Seurat::VariableFeatures(object) <- features
+
+  if(runningTime == FALSE)
+    return(object)
+  else
+    return(list(object = object, time = time))
+}

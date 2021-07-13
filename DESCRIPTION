@@ -14,7 +14,8 @@ Imports:
     SingleCellExperiment,
     SummarizedExperiment,
     scMerge,
-    batchelor
+    batchelor,
+    reticulate
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
