@@ -3,6 +3,7 @@
 export(GetPCA)
 export(GetUMAP)
 export(RunComBatseq)
+export(RunMNN)
 export(RunScMerge)
 export(SampleData)
 export(SeuratPreprocessing)

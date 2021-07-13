@@ -86,3 +86,42 @@ RunScMerge <- function(object = NULL, batch = "batch", ks = NULL, runningTime = 
   else
     return(list(object = object, time = time))
 }
+
+#' RunMNN
+#'
+#' @param object A seurat object to correct batch effects.
+#' @param batch Batch labels.
+#' @param runningTime Return the running time.
+#' @param verbose Print verbose.
+#' @param ... Arguments passed to other methods.
+#'
+#' @return Seurat object with the corrected data in the 'integrated' assay.
+#' @export
+RunMNN <- function(object = NULL, batch = "batch", runningTime = FALSE, verbose = FALSE, ...){
+
+  features <- Seurat::VariableFeatures(object)
+  if(length(features) == 0){
+    warning("Variable features not defined. Running 'FindVariableFeatures' function.", call. = TRUE)
+    features <- Seurat::VariableFeatures(Seurat::FindVariableFeatures(object, verbose = verbose))
+  }
+
+  data <- as.matrix(Seurat::GetAssayData(object, assay = "RNA", slot = "data")[features,])
+  md <- object[[]]
+
+  if(!(batch %in% colnames(md)))
+    stop(paste0(batch, "not found in object's metadata. Check the batch labels."))
+
+  time <- system.time({
+    corrData <- batchelor::mnnCorrect(data, batch = md[[batch]], ...)
+  })
+
+  corrData <- SummarizedExperiment::assay(corrData, "corrected")
+  object[["integrated"]] <- Seurat::CreateAssayObject(counts = corrData)
+  Seurat::DefaultAssay(object) <- "integrated"
+  Seurat::VariableFeatures(object) <- features
+
+  if(runningTime == FALSE)
+    return(object)
+  else
+    return(list(object = object, time = time))
+}
