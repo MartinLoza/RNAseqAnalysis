@@ -292,3 +292,45 @@ RunHarmony <- function(object = NULL, batch = "batch", dims = 10, runningTime = 
   else
     return(list(object = object, time = time))
 }
+
+#' Title
+#'
+#' @param object A seurat object to correct batch effects.
+#' @param batch Batch labels.
+#' @param reduction Reduction to use.
+#' @param dims Number of dimensions to use.
+#' @param per Percentages of the mean batch size.
+#' @param acceptance Return the acceptance rate.
+#' @param verbose
+#' @param verbose Print verbose.
+#'
+#' @return kBET mean score.
+#' @export
+RunKBET <- function(object = NULL, batch = "batch", reduction = "pca", dims = 10, per = 0.1, acceptance = TRUE, verbose = FALSE){
+
+  md <- object[[]]
+  if(!(reduction %in% Seurat::Reductions(object)))
+    stop(paste0(reduction, " not found in the object's reductions."))
+
+  if(!(batch %in% colnames(md)))
+    stop(paste0(batch, " not found in the object's meta data."))
+
+  data <- as.data.frame(Seurat::Embeddings(object = object, reduction = reduction)[,1:dims])
+  meanBatch <- mean(table(md[[batch]]))
+
+  scores <- lapply(per, function(p){
+    k0 = floor(p*(meanBatch))
+    score <- mean(kBET::kBET(df = data, batch = md[[batch]], do.pca = FALSE,
+                             heuristic = FALSE, k0 = k0,
+                             plot = FALSE)$stats$kBET.observed)
+    return(score)
+  })
+
+  scores <- unlist(scores)
+  scores <- mean(scores)
+
+  if(acceptance)
+    scores <- 1-scores
+
+  return(scores)
+}
