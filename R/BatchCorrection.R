@@ -260,3 +260,35 @@ RunComBat <- function(object = NULL, batch = "batch", runningTime = FALSE, verbo
   else
     return(list(object = object, time = time))
 }
+
+#' RunHarmony
+#'
+#' @param object A seurat object to correct batch effects.
+#' @param batch Batch labels.
+#' @param dims Dimensions to use in the correction.
+#' @param runningTime Return the running time.
+#' @param verbose Print verbose.
+#' @param ... Arguments passed to other methods.
+#'
+#' @return Seurat object with the corrected data in the 'harmony' reduction.
+#' @export
+RunHarmony <- function(object = NULL, batch = "batch", dims = 10, runningTime = FALSE, verbose = FALSE, ...){
+
+  if(!("pca" %in% Seurat::Reductions(object))){
+    if(verbose)
+      print("Running PCA.")
+    time <- system.time({
+      object <- GetPCA(object = object, dims = dims, verbose = verbose, ...)
+      object <- harmony::RunHarmony(object = object, group.by.vars = batch, dims.use = 1:dims, verbose = verbose, ...)
+    })
+  }else{
+    time <- system.time({
+      object <- harmony::RunHarmony(object = object, group.by.vars = batch, dims.use = 1:dims, verbose = verbose, ...)
+    })
+  }
+
+  if(runningTime == FALSE)
+    return(object)
+  else
+    return(list(object = object, time = time))
+}

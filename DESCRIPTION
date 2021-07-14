@@ -17,7 +17,8 @@ Imports:
     batchelor,
     reticulate,
     rliger,
-    SeuratWrappers
+    SeuratWrappers,
+    harmony
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
