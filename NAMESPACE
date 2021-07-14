@@ -2,6 +2,7 @@
 
 export(GetPCA)
 export(GetUMAP)
+export(RunComBat)
 export(RunComBatseq)
 export(RunLiger)
 export(RunMNN)
