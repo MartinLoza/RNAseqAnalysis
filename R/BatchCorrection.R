@@ -57,7 +57,7 @@ RunScMerge <- function(object = NULL, batch = "batch", ks = NULL, runningTime = 
     features <- Seurat::VariableFeatures(Seurat::FindVariableFeatures(object, verbose = verbose))
   }
 
-  data <- as.matrix(Seurat::GetAssayData(object, assay = "RNA", slot = "data")[features,])
+  data <- as.matrix(Seurat::GetAssayData(object, assay = "RNA", slot = "data"))
   md <- object[[]]
 
   if(!(batch %in% colnames(md)))
@@ -69,9 +69,10 @@ RunScMerge <- function(object = NULL, batch = "batch", ks = NULL, runningTime = 
   }
 
   tmp <- SingleCellExperiment::SingleCellExperiment(assays = list(counts = data, logcounts = data), colData = md)
+  seg = scMerge::scSEGIndex(exprs_mat = data)
 
   time <- system.time({
-    tmp <- scMerge::scMerge(sce_combine = tmp, ctl = features, assay_name = "scMerge",
+    tmp <- scMerge::scMerge(sce_combine = tmp, ctl = rownames(seg), assay_name = "scMerge",
                             kmeansK = ks, batch_name = batch, plot_igraph = FALSE, verbose = FALSE, ...)
   })
 
