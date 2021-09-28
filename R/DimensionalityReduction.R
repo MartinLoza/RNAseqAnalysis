@@ -23,17 +23,18 @@ GetPCA <- function(object = NULL, dims = 10, verbose = FALSE, ...){
 #' @param PCA Obtain PCA.
 #' @param scale Scale the data.
 #' @param verbose Print verbose.
+#' @param seed Set a random seed. By default, sets the seed to 42.
 #' @param ... Arguments passed to other methods.
 #'
 #' @return UMAP representation.
 #' @export
-GetUMAP <- function(object = NULL, dims = 10, reduction = "pca", PCA = TRUE, scale = TRUE, verbose = FALSE, ...){
+GetUMAP <- function(object = NULL, dims = 10, reduction = "pca", PCA = TRUE, scale = TRUE, seed = 42, verbose = FALSE, ...){
   if(scale)
     object <- Seurat::ScaleData(object, verbose = verbose, ...)
   if(PCA)
     object <- Seurat::RunPCA(object, npcs = dims, verbose = verbose, ...)
 
-  object <- Seurat::RunUMAP(object, reduction = reduction, dims = 1:dims, verbose = verbose, ...)
+  object <- Seurat::RunUMAP(object, reduction = reduction, dims = 1:dims, seed.use = seed, verbose = verbose, ...)
 
   return(object)
 }
