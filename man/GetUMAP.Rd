@@ -10,6 +10,7 @@ GetUMAP(
   reduction = "pca",
   PCA = TRUE,
   scale = TRUE,
+  seed = 42,
   verbose = FALSE,
   ...
 )
@@ -24,6 +25,8 @@ GetUMAP(
 \item{PCA}{Obtain PCA.}
 
 \item{scale}{Scale the data.}
+
+\item{seed}{Set a random seed. By default, sets the seed to 42.}
 
 \item{verbose}{Print verbose.}
 
