@@ -74,3 +74,14 @@ myFeaturePlot <- function(df = NULL, feature = NULL,
 
   return(p)
 }
+
+#' TextSize
+#'
+#' @param size Text size
+#'
+#' @return A theme with the selected text size.
+#' @export
+TextSize <- function(size = 10 ){
+  tmp_theme <- theme(text = element_text(size = size))
+  return(tmp_theme)
+}
