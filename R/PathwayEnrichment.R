@@ -39,3 +39,28 @@ GetKEGGPathways <- function(df = NULL, species = "human"){
 
   return(pathways)
 }
+
+#' GetTopKEGG
+#'
+#' @param df Data frame containing KEGG pathways.
+#' @param top.by Label used to select the top.
+#' @param type Type of selected p-values. Available options are: "double", negatives and positive, "positive", and "negative".
+#' @param ntop Number of top values.
+#'
+#' @return Data frame containing the top values.
+#' @export
+GetTopKEGG <- function(df = NULL, top.by = "Selected_PV", type = "double" , ntop = 20){
+
+  if(type == "double"){
+    idx <- sort(abs(df[[top.by]]), decreasing = TRUE, index.return = TRUE)$ix
+  }else if(type == "positive"){
+    idx <- sort(df[[top.by]], decreasing = TRUE, index.return = TRUE)$ix
+  }else{
+    idx <- sort(df[[top.by]], decreasing = FALSE, index.return = TRUE)$ix
+  }
+
+  idx <- idx[1:ntop]
+  tmp <- df[idx,]
+
+  return(tmp)
+}
