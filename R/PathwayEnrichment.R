@@ -95,8 +95,8 @@ PlotKEGG <- function(df = NULL, type = "double", ntop = 20, color_by = "Directio
   df <- df %>% mutate(Direction = direction)
   df <- df %>% mutate(Selected_PV = selPV)
 
-  topKegg <- getTopKEGG(df = df, type = type, top.by = "Selected_PV", ntop = ntop)
-  topKegg <- sortDF(df = topKegg, sort.by = "Selected_PV", decreasing = FALSE)
+  topKegg <- GetTopKEGG(df = df, type = type, top.by = "Selected_PV", ntop = ntop)
+  topKegg <- SortDF(df = topKegg, sort.by = "Selected_PV", decreasing = FALSE)
   levels <- topKegg$Pathway
   topKegg[["Pathway"]] <- factor(topKegg[["Pathway"]], levels = levels)
 
