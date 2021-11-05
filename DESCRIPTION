@@ -23,7 +23,12 @@ Imports:
     plyr,
     tidyverse,
     ggplot2,
-    cowplot
+    cowplot,
+    AnnotationDbi,
+    limma,
+    org.Mm.eg.db,
+    org.Hs.eg.db,
+    patchwork
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
