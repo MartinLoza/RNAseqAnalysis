@@ -30,3 +30,9 @@ SampleData <- function(object = NULL, frac = NULL, seed = 777, ...){
 
   return(object[,idx])
 }
+
+SortDF <- function(df = NULL, sort.by = NULL, decreasing = TRUE){
+  idx <- sort(df[[sort.by]], decreasing = decreasing, index.return = TRUE)$ix
+  tmp <- df[idx,]
+  return(tmp)
+}
