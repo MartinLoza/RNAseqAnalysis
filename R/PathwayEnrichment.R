@@ -73,11 +73,26 @@ GetTopKEGG <- function(df = NULL, top.by = "Selected_PV", type = "double" , ntop
 #' @param color_by Label to color points.
 #' @param point_size Size of points
 #' @param text_size Size of text in the plot.
+#' @param dfs List of dataframes containing KEGG pathways
+#' @param ntop Number of top pathways to select.
 #'
 #' @return A ggplot object.
+#' @return List containing the selected pathways and their ranks (e.g. number of dfs containing the pathway).
 #' @export
 PlotKEGG <- function(df = NULL, type = "double", ntop = 20, color_by = "Direction", point_size = 3, text_size = 15){
+GetTopPathways <- function(dfs = NULL, ntop = 20){
+  dfs <- lapply(dfs, GetTopKEGG, ntop = ntop)
+  tmp <- Reduce(rbind,dfs)
 
+  idx <- which(tmp$Selected_PV == 0)
+  tmp <- tmp[-idx,]
+
+  tmp <- tmp %>% group_by(Pathway) %>% count(Pathway)
+  tmp <- SortDF(df = tmp, sort.by = "n")
+  sel_pathways <- tmp[1:ntop,]
+
+  return(sel_pathways)
+}
   # SETUP
   ## setup direction and selected p-values
 
