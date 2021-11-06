@@ -65,21 +65,13 @@ GetTopKEGG <- function(df = NULL, top.by = "Selected_PV", type = "double" , ntop
   return(tmp)
 }
 
-#' PlotKEGG
+#' GetTopPathways
 #'
-#' @param df Data frame containing KEGG pathways
-#' @param type Type of selected p-values. Available options are: "double", negatives and positive, "positive", and "negative".
-#' @param ntop Number of top values.
-#' @param color_by Label to color points.
-#' @param point_size Size of points
-#' @param text_size Size of text in the plot.
 #' @param dfs List of dataframes containing KEGG pathways
 #' @param ntop Number of top pathways to select.
 #'
-#' @return A ggplot object.
 #' @return List containing the selected pathways and their ranks (e.g. number of dfs containing the pathway).
 #' @export
-PlotKEGG <- function(df = NULL, type = "double", ntop = 20, color_by = "Direction", point_size = 3, text_size = 15){
 GetTopPathways <- function(dfs = NULL, ntop = 20){
   dfs <- lapply(dfs, GetTopKEGG, ntop = ntop)
   tmp <- Reduce(rbind,dfs)
@@ -93,6 +85,15 @@ GetTopPathways <- function(dfs = NULL, ntop = 20){
 
   return(sel_pathways)
 }
+
+
+#' SetDirectionKEGG
+#'
+#' @param df Data frame containing KEGG analysis results.
+#'
+#' @return Input data frame with two extra columns: Direction (e.g. Up and Down for up and down expressed pathways, respectively), and Selected_PV (e.g. -log10(pval) of the selected up or down p-value)
+#' @export
+SetDirectionKEGG <- function(df = NULL){
   # SETUP
   ## setup direction and selected p-values
 
@@ -110,17 +111,43 @@ GetTopPathways <- function(dfs = NULL, ntop = 20){
   df <- df %>% mutate(Direction = direction)
   df <- df %>% mutate(Selected_PV = selPV)
 
-  topKegg <- GetTopKEGG(df = df, type = type, top.by = "Selected_PV", ntop = ntop)
-  topKegg <- SortDF(df = topKegg, sort.by = "Selected_PV", decreasing = FALSE)
-  levels <- topKegg$Pathway
-  topKegg[["Pathway"]] <- factor(topKegg[["Pathway"]], levels = levels)
+  return(df)
+}
 
-  p <- ggplot(topKegg, aes_string(x = "Selected_PV", y = "Pathway", color = color_by)) +
+#' PlotKEGG
+#'
+#' @param df Data frame containing KEGG pathways
+#' @param type Type of selected p-values. Available options are: "double", negatives and positive, "positive", and "negative".
+#' @param color_by Label to color points.
+#' @param point_size Size of points.
+#' @param text_size Size of text in the plot.
+#' @param sort.by Label to use to sort the pathways.
+#' @param decreasing Sorting direction.
+#' @param threshold P-value threshold.
+#' @param vline_size Threshold line size.
+#'
+#' @return A ggplot object.
+#' @export
+PlotKEGG <- function(df = NULL, type = "double", color_by = "Direction", point_size = 3, text_size = 15, sort.by = "Selected_PV", decreasing = FALSE, threshold = NULL, vline_size = 1 ){
+
+  df <- SortDF(df = df, sort.by = sort.by, decreasing = decreasing)
+  levels <- unique(df$Pathway)
+  df[["Pathway"]] <- factor(df[["Pathway"]], levels = levels)
+
+  p <- ggplot(df, aes_string(x = "Selected_PV", y = "Pathway", color = color_by)) +
     geom_point(size = point_size) +
     theme_classic() +
     labs(x = expression(paste('Signed ', -log[10],'(adjusted p-value)')),
          y = "KEGG Pathways") +
     TextSize(size = text_size)
+
+  if(!is.null(threshold)){
+    idx <- which(abs(df$Selected_PV) < -log10(threshold))
+    df_t <- df[idx,]
+
+    p <- p +
+      geom_point(data = df_t, aes_string(x = "Selected_PV", y = "Pathway"), color = "gray",size = point_size) + geom_vline(xintercept = c(-log10(threshold),log10(threshold)), linetype = "dashed", size = vline_size)
+  }
 
   return(p)
 }

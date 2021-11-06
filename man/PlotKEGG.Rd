@@ -7,10 +7,13 @@
 PlotKEGG(
   df = NULL,
   type = "double",
-  ntop = 20,
   color_by = "Direction",
   point_size = 3,
-  text_size = 15
+  text_size = 15,
+  sort.by = "Selected_PV",
+  decreasing = FALSE,
+  threshold = NULL,
+  vline_size = 1
 )
 }
 \arguments{
@@ -18,13 +21,19 @@ PlotKEGG(
 
 \item{type}{Type of selected p-values. Available options are: "double", negatives and positive, "positive", and "negative".}
 
-\item{ntop}{Number of top values.}
-
 \item{color_by}{Label to color points.}
 
-\item{point_size}{Size of points}
+\item{point_size}{Size of points.}
 
 \item{text_size}{Size of text in the plot.}
+
+\item{sort.by}{Label to use to sort the pathways.}
+
+\item{decreasing}{Sorting direction.}
+
+\item{threshold}{P-value threshold.}
+
+\item{vline_size}{Threshold line size.}
 }
 \value{
 A ggplot object.
