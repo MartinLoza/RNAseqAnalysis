@@ -85,3 +85,14 @@ TextSize <- function(size = 10 ){
   tmp_theme <- theme(text = element_text(size = size))
   return(tmp_theme)
 }
+
+#' LegendPosition
+#'
+#' @param position Legend position
+#'
+#' @return Theme with the legened in the selected position. Available positions are :"none", "right", "left", "top", and "bottom".
+#' @export
+LegendPosition <- function(position = "right"){
+  tmp_theme <- theme(legend.position = position)
+}
+
