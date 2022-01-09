@@ -93,6 +93,71 @@ myFeaturePlot <- function(df = NULL, feature = NULL,
 
   return(p)
 }
+
+#' PlotGroups
+#'
+#' @param object
+#' @param group
+#' @param combine
+#' @param ncol
+#'
+#' @return
+#' @export
+#'
+#' @examples
+PlotGroups <- function(object = NULL, group = NULL,
+                       combine = FALSE, ncol = 2,
+                       text_size = 20, point_size = 2,
+                       alpha = 1.0, low_color = "gray",
+                       high_color = "tomato", legend_position = "right",
+                       legend_point_size = NULL, order = TRUE,
+                       palette = NULL, ...){
+
+  if(is.null(group)){
+    print("The input parameter 'group' needs to be specified.")
+    stop(call. = TRUE)
+  }
+
+  if(is.null(object)){
+    print("The input parameter 'object' needs to be specified.")
+    stop(call. = TRUE)
+  }
+
+  md <- object[[]]
+  umapData <- Embeddings(object = object, reduction = "umap")
+
+  plots <- list()
+
+  for(g in unique(md[,group])){
+
+    feature <- rep(0, nrow(md))
+    idx <- which(md[,group] == g)
+    feature[idx] <- 1
+    feature <- factor(feature)
+
+    df <- data.frame("Dim1" = umapData[,1], "Dim2" = umapData[,2], feature = feature)
+
+    p <- RNAseqAnalysis::myFeaturePlot(df = df, feature = "feature",
+                                       discrete = TRUE, text_size = 20, point_size = 2,
+                                       alpha = alpha, low_color = low_color,
+                                       high_color = high_color, legend_position = legend_position,
+                                       legend_point_size = legend_point_size, order = order,
+                                       palette = palette, ...) +
+      ggtitle(g)
+
+    plots[[g]] <- p
+  }
+
+  if(combine){
+    p <- plots[[1]]
+    for(i in 2:length(plots)){
+      p <- p + plots[[i]]
+    }
+    p <- p + plot_layout(ncol = ncol)
+  }else{
+    p <- plots
+  }
+
   return(p)
 }
 
