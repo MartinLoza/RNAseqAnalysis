@@ -55,23 +55,44 @@ myFeaturePlot <- function(df = NULL, feature = NULL,
                           alpha = 1.0, low_color = "gray",
                           high_color = "tomato", legend_position = "right",
                           legend_point_size = NULL, order = TRUE,
-                          ...  ){
+                          discrete = FALSE, palette = NULL,
+                          ...){
 
+  # Order the feature
   if(order){
     df <- df[order(df[feature]),]
   }
 
+  # Colors palette
+  if(is.null(palette)){
+    if(length(unique(df$feature)) == 2){
+      palette <- c(low_color, high_color)
+    }else{
+      palette <- 1:length(unique(df$feature))
+    }
+  }
+
+  # Create the initial plot
   p <-  ggplot(df, aes_string(x = "Dim1", y = "Dim2", color = feature)) +
     geom_point(size = point_size, alpha = alpha) +
-    scale_color_gradient(low = low_color, high =  high_color) +
     theme_classic() +
     theme(text = element_text(size = text_size), legend.position = legend_position, ... ) +
     ggtitle("Feature plot")
 
+  # Change the legend's point size
   if(!is.null(legend_point_size)){
     p <- p + guides(colour = guide_legend(override.aes = list(size=legend_point_size)))
   }
 
+  # Change the points' color
+  if(discrete){
+    p <- p + scale_color_manual(values = palette)
+  }else{
+    p <- p + scale_color_gradient(low = low_color, high =  high_color)
+  }
+
+  return(p)
+}
   return(p)
 }
 
