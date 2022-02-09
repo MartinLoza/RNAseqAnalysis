@@ -31,6 +31,38 @@ myPCAplot <- function(df = NULL, group_by = NULL, text_size = 20,
   return(p)
 }
 
+#' PlotElbowPCA
+#'
+#' @param object Seurat object with calculated PCA.
+#' @param dims Number of dimensions to plot.
+#' @param pSize Point size.
+#' @param lSize Line size.
+#' @param alpha Point transparency.
+#' @param selDim Selected dimension.
+#' @param text_size Plot's text size.
+#'
+#' @return A ggplot object containing the elbow plot.
+#' @export
+PlotElbowPCA <- function(object = NULL, dims = 30, pSize = 4, lSize = 0.5, alpha = 0.6, selDim = NULL, text_size = 20){
+
+  variance <- object@reductions$pca@stdev^2
+  df <- data.frame(Variance = variance[1:dims], PC = 1:dims)
+
+  p <- ggplot(df, aes(x = PC, y = Variance)) +
+    geom_point(size = pSize) +
+    geom_line(size = lSize, alpha = alpha) +
+    theme_classic() +
+    theme(text = element_text(size = text_size), legend.position = "none") +
+    xlab("Principal Components") +
+    ggtitle("Elbow Plot")
+
+  if(!is.null(selDim)){
+    p <- p + geom_point(df[selDim,],mapping =  aes(x = PC, y = Variance), size = pSize, color = "red")
+  }
+
+  return(p)
+}
+
 
 #' myFeaturePlot
 #'
