@@ -96,15 +96,23 @@ myFeaturePlot <- function(df = NULL, feature = NULL,
 
 #' PlotGroups
 #'
-#' @param object
-#' @param group
-#' @param combine
-#' @param ncol
+#' @param object Seurat object with calculated UMAP
+#' @param group Labels to use as colors.
+#' @param combine Whether the plots should be combined
+#' @param ncol If plots are combined, the number of columns of the final plot.
+#' @param text_size Size of text.
+#' @param point_size Size of points.
+#' @param alpha Transparency of points.
+#' @param low_color Color for background points.
+#' @param high_color Color for main points.
+#' @param legend_position Positions of plot legends.
+#' @param legend_point_size Size of legends' points.
+#' @param order Whether the points should be ordered.
+#' @param palette Color pallete to use.
+#' @param ... Arguments passed to other methods.
 #'
 #' @return
 #' @export
-#'
-#' @examples
 PlotGroups <- function(object = NULL, group = NULL,
                        combine = FALSE, ncol = 2,
                        text_size = 20, point_size = 2,
