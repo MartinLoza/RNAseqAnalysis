@@ -138,7 +138,7 @@ PlotGroups <- function(object = NULL, group = NULL,
     df <- data.frame("Dim1" = umapData[,1], "Dim2" = umapData[,2], feature = feature)
 
     p <- RNAseqAnalysis::myFeaturePlot(df = df, feature = "feature",
-                                       discrete = TRUE, text_size = 20, point_size = 2,
+                                       discrete = TRUE, text_size = text_size, point_size = point_size,
                                        alpha = alpha, low_color = low_color,
                                        high_color = high_color, legend_position = legend_position,
                                        legend_point_size = legend_point_size, order = order,
