@@ -22,12 +22,12 @@ GetTopGenes <- function(deg = NULL, pval = 0.05, fold = 1.5, type = "double", nt
   }
 
   if(!is.null(ntop)){
-    if(!is.null(group)){
+    if(is.null(group)){
       warning("Top genes by clusters", call. = TRUE)
       group = "cluster"
     }
 
-    topGenes <- topGenes %>% group_by(cluster) %>% top_n(n = ntop)
+    topGenes <- topGenes %>% group_by_at(group) %>% top_n(n = ntop, wt = avg_log2FC)
   }
 
   return(topGenes)
